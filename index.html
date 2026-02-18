@@ -2,47 +2,51 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>MM2 Tracker AAA</title>
+<title>MM2 ULTRA AAA</title>
 
 <style>
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     color: white;
-    text-align: center;
     background: url("fundo.jpg") no-repeat center center fixed;
     background-size: cover;
 }
 
 /* container */
 .container {
-    max-width: 520px;
+    max-width: 550px;
     margin: auto;
     padding: 20px;
 }
 
-/* glass premium */
+/* glass */
 .glass {
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(25px);
     background: rgba(255,255,255,0.08);
-    border-radius: 25px;
+    border-radius: 30px;
     padding: 25px;
     margin-bottom: 20px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.3);
+    box-shadow: 0 0 30px rgba(0,0,0,0.4);
+}
+
+/* título */
+h2 {
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
 /* contador */
 #contador {
-    font-size: 80px;
-    margin: 20px 0;
-    text-shadow: 0 0 20px rgba(255,255,255,0.4);
+    font-size: 90px;
+    text-align: center;
+    text-shadow: 0 0 20px #fff, 0 0 40px #667eea;
 }
 
 /* grupos */
 .group {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 12px;
     margin: 12px 0;
     flex-wrap: wrap;
 }
@@ -61,10 +65,10 @@ button {
 
 button:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    box-shadow: 0 0 12px rgba(255,255,255,0.6);
 }
 
-/* botões transparentes */
+/* glass button */
 .btn-glass {
     background: rgba(255,255,255,0.15);
 }
@@ -78,17 +82,7 @@ input {
     text-align: center;
 }
 
-/* animação */
-.pop {
-    animation: pop 0.2s;
-}
-@keyframes pop {
-    0% {transform: scale(1);}
-    50% {transform: scale(1.3);}
-    100% {transform: scale(1);}
-}
-
-/* botões de canto */
+/* canto */
 .top-buttons {
     position: fixed;
     top: 15px;
@@ -105,16 +99,58 @@ input {
     text-align: left;
 }
 
+/* item histórico */
 .hist-item {
-    padding: 8px;
+    padding: 10px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* barra progresso */
+.progress {
+    height: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00ffcc, #667eea);
+}
+
+/* animação */
+.pop {
+    animation: pop 0.2s;
+}
+@keyframes pop {
+    0% {transform: scale(1);}
+    50% {transform: scale(1.3);}
+    100% {transform: scale(1);}
+}
+
+/* partículas */
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: white;
+    border-radius: 50%;
+    animation: explode 0.6s forwards;
+}
+
+@keyframes explode {
+    to {
+        transform: translate(var(--x), var(--y));
+        opacity: 0;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- BOTÕES DO CANTO -->
 <div class="top-buttons">
     <button class="btn-glass" id="btnSom" onclick="toggleSom()">🔊 ON</button>
     <button class="btn-glass" onclick="toggleHist()">📊</button>
@@ -123,10 +159,14 @@ input {
 <div class="container">
 
 <div class="glass">
-    <h2>🎮 MM2 Tracker</h2>
+    <h2>🎮 MM2 ULTRA</h2>
     <h3>🏆 Vitórias: <span id="wins">0</span></h3>
 
     <div id="contador">0</div>
+
+    <div class="progress">
+        <div id="bar" class="progress-bar"></div>
+    </div>
 
     <div class="group">
         <button onclick="add(1)">+1</button>
@@ -152,187 +192,176 @@ input {
 </div>
 
 <div class="glass">
+    <h3>📊 Estatísticas</h3>
+    <p>Total: <span id="total">0</span></p>
+    <p>Média: <span id="media">0</span></p>
+    <p>🔥 Melhor dia: <span id="melhor">0</span></p>
+</div>
+
+<div class="glass">
     <div id="historico"></div>
 </div>
 
 </div>
 
 <audio id="click">
-    <source src="https://www.myinstants.com/media/sounds/minecraft_click.mp3">
+<source src="https://www.voicy.network/sounds/uLdev5ASy0yq0g6tTbcvjg-video-game-menu-button-click">
 </audio>
 
 <script>
 
-let contador = 0;
-let wins = 0;
-let som = true;
+let contador=0,wins=0,som=true;
 
-// pegar data atual
-function hoje(){
-    return new Date().toLocaleDateString();
-}
+function hoje(){return new Date().toLocaleDateString();}
 
-// carregar dados
+// carregar
 function carregar(){
-    contador = parseInt(localStorage.getItem("contador")) || 0;
-    wins = parseInt(localStorage.getItem("wins")) || 0;
-
-    if(localStorage.getItem("som") !== null){
-        som = localStorage.getItem("som") === "true";
-    }
-
-    checarVirada();
-    atualizar();
-    atualizarSomUI();
+contador=+localStorage.contador||0;
+wins=+localStorage.wins||0;
+som=localStorage.som!=="false";
+checarVirada();
+update();
+updateSom();
+calcStats();
 }
 
 // salvar
 function salvar(){
-    localStorage.setItem("contador", contador);
-    localStorage.setItem("wins", wins);
-    localStorage.setItem("som", som);
+localStorage.contador=contador;
+localStorage.wins=wins;
+localStorage.som=som;
 }
 
-// atualizar tela
-function atualizar(){
-    contadorEl.innerText = contador;
-    winsEl.innerText = wins;
+// UI
+function update(){
+contadorEl.innerText=contador;
+winsEl.innerText=wins;
+bar.style.width=Math.min(contador,100)+"%";
 }
 
 // som
-function atualizarSomUI(){
-    btnSom.innerText = som ? "🔊 ON" : "🔇 OFF";
+function updateSom(){
+btnSom.innerText=som?"🔊 ON":"🔇 OFF";
 }
 
 function play(){
-    if(som){
-        let a = click;
-        a.currentTime = 0;
-        a.play();
-    }
+if(som){click.currentTime=0;click.play();}
 }
 
 function toggleSom(){
-    som = !som;
-    salvar();
-    atualizarSomUI();
+som=!som;salvar();updateSom();
 }
 
-// adicionar
+// add
 function add(v){
-    contador += v;
-    if(contador < 0) contador = 0;
-
-    salvar();
-    atualizar();
-    animar();
+contador+=v;
+if(contador<0)contador=0;
+salvar();update();animar();particles();
 }
 
-// vitória
+// win
 function win(){
-    wins++;
-    salvar();
-    atualizar();
-    play();
+wins++;salvar();update();play();
 }
 
-// set manual
+// set
 function setar(){
-    let v = parseInt(edit.value);
-    if(isNaN(v)) return;
-
-    contador = v;
-    salvar();
-    atualizar();
-    play();
+let v=+edit.value;
+if(isNaN(v))return;
+contador=v;
+salvar();update();play();
 }
 
-// salvar histórico do dia
+// salvar dia
 function salvarDia(){
-    let hist = JSON.parse(localStorage.getItem("hist")) || [];
-
-    hist.push({
-        data: localStorage.getItem("ultimaData"),
-        partidas: contador,
-        wins: wins
-    });
-
-    localStorage.setItem("hist", JSON.stringify(hist));
+let hist=JSON.parse(localStorage.hist||"[]");
+hist.push({data:localStorage.data,partidas:contador,wins:wins});
+localStorage.hist=JSON.stringify(hist);
 }
 
-// checar virada de dia
+// virada
 function checarVirada(){
-    let ultima = localStorage.getItem("ultimaData");
-    let atual = hoje();
-
-    if(!ultima){
-        localStorage.setItem("ultimaData", atual);
-        return;
-    }
-
-    if(ultima !== atual){
-        salvarDia();
-
-        contador = 0;
-        wins = 0;
-
-        localStorage.setItem("ultimaData", atual);
-        salvar();
-    }
+let atual=hoje();
+if(!localStorage.data){localStorage.data=atual;return;}
+if(localStorage.data!==atual){
+salvarDia();
+contador=0;wins=0;
+localStorage.data=atual;
+salvar();
+}
 }
 
 // reset manual
 function resetarManual(){
-    salvarDia();
-    contador = 0;
-    wins = 0;
-    salvar();
-    atualizar();
+salvarDia();
+contador=0;wins=0;
+salvar();update();calcStats();
 }
 
-// histórico toggle
+// histórico
 function toggleHist(){
-    if(historico.style.display === "none"){
-        mostrarHist();
-        historico.style.display = "block";
-    } else {
-        historico.style.display = "none";
-    }
+historico.style.display=historico.style.display=="none"?"block":"none";
+mostrarHist();
 }
 
-// mostrar histórico
 function mostrarHist(){
-    let hist = JSON.parse(localStorage.getItem("hist")) || [];
+let hist=JSON.parse(localStorage.hist||"[]");
+historico.innerHTML="<h3>📊 Histórico Diário</h3>";
+hist.slice().reverse().forEach(h=>{
+historico.innerHTML+=`<div class="hist-item">
+📅 ${h.data}<br>🎮 ${h.partidas} | 🏆 ${h.wins}
+</div>`;
+});
+}
 
-    historico.innerHTML = "<h3>📊 Histórico Diário</h3>";
+// stats
+function calcStats(){
+let hist=JSON.parse(localStorage.hist||"[]");
+let total=0,melhor=0;
+hist.forEach(h=>{
+total+=h.partidas;
+if(h.partidas>melhor)melhor=h.partidas;
+});
+let media=hist.length?Math.round(total/hist.length):0;
 
-    hist.slice().reverse().forEach(h=>{
-        historico.innerHTML += `
-        <div class="hist-item">
-            📅 ${h.data}<br>
-            🎮 Partidas: ${h.partidas}<br>
-            🏆 Vitórias: ${h.wins}
-        </div>`;
-    });
+totalEl.innerText=total;
+mediaEl.innerText=media;
+melhorEl.innerText=melhor;
 }
 
 // animação
 function animar(){
-    contadorEl.classList.add("pop");
-    play();
-    setTimeout(()=>contadorEl.classList.remove("pop"),200);
+contadorEl.classList.add("pop");
+play();
+setTimeout(()=>contadorEl.classList.remove("pop"),200);
 }
 
-// reset automático
-setInterval(()=>{
-    checarVirada();
-},60000);
+// partículas
+function particles(){
+for(let i=0;i<10;i++){
+let p=document.createElement("div");
+p.className="particle";
+p.style.left="50%";
+p.style.top="40%";
+p.style.setProperty("--x",(Math.random()*200-100)+"px");
+p.style.setProperty("--y",(Math.random()*200-100)+"px");
+document.body.appendChild(p);
+setTimeout(()=>p.remove(),600);
+}
+}
 
-// atalhos DOM
-const contadorEl = document.getElementById("contador");
-const winsEl = document.getElementById("wins");
-const historico = document.getElementById("historico");
-const btnSom = document.getElementById("btnSom");
+// auto reset
+setInterval(()=>checarVirada(),60000);
+
+// refs
+const contadorEl=document.getElementById("contador");
+const winsEl=document.getElementById("wins");
+const historico=document.getElementById("historico");
+const btnSom=document.getElementById("btnSom");
+const bar=document.getElementById("bar");
+const totalEl=document.getElementById("total");
+const mediaEl=document.getElementById("media");
+const melhorEl=document.getElementById("melhor");
 
 carregar();
 
