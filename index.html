@@ -1,93 +1,105 @@
-<script type="module">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Contador MM2</title>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    text-align: center;
+    color: white;
 
-/* CONFIG DO FIREBASE (SUA) */
-const firebaseConfig = {
-  apiKey: "AIzaSyDe4V1HgiL47Ut81Tn6B2dRxZtHZ-AdkVc",
-  authDomain: "mm2-tracker-c22d8.firebaseapp.com",
-  projectId: "mm2-tracker-c22d8",
-  storageBucket: "mm2-tracker-c22d8.firebasestorage.app",
-  messagingSenderId: "765311899661",
-  appId: "1:765311899661:web:3797d10db4fb7e5e229d44"
-};
-
-/* INICIAR FIREBASE */
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-/* LOGIN SIMPLES */
-let user = localStorage.getItem("user");
-
-if (!user) {
-  user = prompt("Digite seu nome:");
-  localStorage.setItem("user", user);
+    background: url("fundo.jpg") no-repeat center center fixed;
+    background-size: cover;
 }
 
-/* VARIÁVEIS */
-let contador = 0;
-let vitorias = 0;
-
-/* PEGAR ELEMENTOS */
-const contadorEl = document.getElementById("contador");
-const vitoriasEl = document.getElementById("vitorias");
-
-/* ATUALIZAR TELA */
-function atualizar() {
-  if (contadorEl) contadorEl.innerText = contador;
-  if (vitoriasEl) vitoriasEl.innerText = vitorias;
+#telaNome {
+    margin-top: 150px;
 }
 
-/* CARREGAR DADOS */
-async function carregar() {
-  try {
-    const ref = doc(db, "players", user);
-    const snap = await getDoc(ref);
+#jogo {
+    display: none;
+}
 
-    if (snap.exists()) {
-      const data = snap.data();
-      contador = data.contador || 0;
-      vitorias = data.vitorias || 0;
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="telaNome">
+    <h1>Digite seu nome</h1>
+    <input id="nome" placeholder="Seu nome">
+    <br><br>
+    <button onclick="entrar()">Entrar</button>
+</div>
+
+<div id="jogo">
+    <h1 id="titulo"></h1>
+    <h2>Vitórias: <span id="vitorias">0</span></h2>
+
+    <button onclick="ganhou()">+ Vitória</button>
+    <button onclick="resetar()">Resetar</button>
+</div>
+
+<script>
+
+// carrega dados salvos
+let nomeSalvo = localStorage.getItem("nome");
+let vitorias = localStorage.getItem("vitorias");
+
+if(vitorias === null) vitorias = 0;
+
+// se já tiver nome salvo, entra direto
+if(nomeSalvo) {
+    iniciarJogo(nomeSalvo);
+}
+
+// entrar no jogo
+function entrar() {
+    let nome = document.getElementById("nome").value;
+
+    if(nome === "") {
+        alert("Coloca um nome 😡");
+        return;
     }
 
-    atualizar();
-  } catch (e) {
-    console.error("Erro ao carregar:", e);
-  }
+    localStorage.setItem("nome", nome);
+    localStorage.setItem("vitorias", 0);
+
+    iniciarJogo(nome);
 }
 
-/* SALVAR DADOS */
-async function salvar() {
-  try {
-    const ref = doc(db, "players", user);
+// inicia interface
+function iniciarJogo(nome) {
+    document.getElementById("telaNome").style.display = "none";
+    document.getElementById("jogo").style.display = "block";
 
-    await setDoc(ref, {
-      contador,
-      vitorias,
-      atualizado: new Date()
-    });
-
-  } catch (e) {
-    console.error("Erro ao salvar:", e);
-  }
+    document.getElementById("titulo").innerText = "Jogador: " + nome;
+    document.getElementById("vitorias").innerText = vitorias;
 }
 
-/* FUNÇÕES GLOBAIS */
-window.alterar = function(v){
-  contador += v;
-  if (contador < 0) contador = 0;
-  atualizar();
-  salvar();
+// soma vitória
+function ganhou() {
+    vitorias++;
+    document.getElementById("vitorias").innerText = vitorias;
+    localStorage.setItem("vitorias", vitorias);
 }
 
-window.addVitoria = function(){
-  vitorias++;
-  atualizar();
-  salvar();
+// reseta tudo
+function resetar() {
+    vitorias = 0;
+    document.getElementById("vitorias").innerText = vitorias;
+    localStorage.setItem("vitorias", vitorias);
 }
-
-/* INICIAR */
-carregar();
 
 </script>
+
+</body>
+</html>
