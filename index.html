@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Contador MM2</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+
+      background: 
+        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url("https://images.unsplash.com/photo-1605902711622-cfb43c44367f");
+
+      background-size: cover;
+      background-position: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px;
+      border-radius: 25px;
+
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+
+    #contador {
+      font-size: 80px;
+      margin: 20px 0;
+      font-weight: bold;
+      transition: transform 0.2s;
+    }
+
+    .botoes {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    button {
+      font-size: 30px;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: white;
+    }
+
+    .mais {
+      background: linear-gradient(45deg, #00ff87, #00c9ff);
+    }
+
+    .menos {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    }
+
+    .reset {
+      margin-top: 20px;
+      font-size: 18px;
+      padding: 10px 20px;
+      background: #555;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .animar {
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>🎮 Partidas Jogadas (MM2)</h1>
+
+    <div id="contador">0</div>
+
+    <div class="botoes">
+      <button class="menos" onclick="diminuir()">-</button>
+      <button class="mais" onclick="aumentar()">+</button>
+    </div>
+
+    <button class="reset" onclick="resetar()">Resetar</button>
+  </div>
+
+  <script>
+    let valor = localStorage.getItem("contadorMM2");
+
+    if (valor === null) {
+      valor = 0;
+    } else {
+      valor = parseInt(valor);
+    }
+
+    const contador = document.getElementById("contador");
+
+    function atualizar() {
+      contador.innerText = valor;
+      localStorage.setItem("contadorMM2", valor);
+
+      contador.classList.add("animar");
+      setTimeout(() => {
+        contador.classList.remove("animar");
+      }, 200);
+    }
+
+    function aumentar() {
+      valor++;
+      atualizar();
+    }
+
+    function diminuir() {
+      if (valor > 0) {
+        valor--;
+        atualizar();
+      }
+    }
+
+    function resetar() {
+      valor = 0;
+      atualizar();
+    }
+
+    atualizar();
+  </script>
+
+</body>
+</html>
