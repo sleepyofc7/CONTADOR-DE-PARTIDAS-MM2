@@ -1,9 +1,12 @@
-const statusText = document.getElementById("status");
+const counterEl = document.getElementById("counter");
 const historyList = document.getElementById("historyList");
 const historyMenu = document.getElementById("historyMenu");
+
+const addBtn = document.getElementById("addBtn");
+const resetBtn = document.getElementById("resetBtn");
 const toggleHistory = document.getElementById("toggleHistory");
 
-// 🔊 som personalizado
+// 🔊 som
 const clickSound = new Audio("click.mp3");
 
 function playClick() {
@@ -12,19 +15,20 @@ function playClick() {
 }
 
 // 📊 dados
-let checksToday = 0;
+let count = parseInt(localStorage.getItem("count")) || 0;
 let lastDay = localStorage.getItem("lastDay") || new Date().getDate();
 
-// 📅 verificar mudança de dia
+// 📅 verifica mudança de dia
 function checkNewDay() {
   const today = new Date().getDate();
 
   if (today != lastDay) {
     saveHistory();
-    checksToday = 0;
+    count = 0;
+
     lastDay = today;
     localStorage.setItem("lastDay", today);
-    localStorage.setItem("checksToday", 0);
+    localStorage.setItem("count", count);
   }
 }
 
@@ -36,7 +40,7 @@ function saveHistory() {
 
   history.push({
     date: date,
-    checks: checksToday
+    matches: count
   });
 
   localStorage.setItem("history", JSON.stringify(history));
@@ -50,27 +54,37 @@ function loadHistory() {
 
   history.reverse().forEach(item => {
     let li = document.createElement("li");
-    li.textContent = `${item.date} - ${item.checks} verificações`;
+    li.textContent = `${item.date} - ${item.matches} partidas`;
     historyList.appendChild(li);
   });
 }
 
-// 🔄 verificar status (simulação)
-function checkStatus() {
+// ➕ adicionar partida
+addBtn.onclick = () => {
   playClick();
 
   checkNewDay();
 
-  const online = Math.random() > 0.5;
+  count++;
+  counterEl.textContent = count;
 
-  statusText.textContent = online ? "Online 🟢" : "Offline 🔴";
+  localStorage.setItem("count", count);
+};
 
-  checksToday++;
-  localStorage.setItem("checksToday", checksToday);
-}
+// 🔄 reset manual
+resetBtn.onclick = () => {
+  playClick();
 
-// 📊 botão abrir/fechar histórico
-toggleHistory.addEventListener("click", () => {
+  if (confirm("Resetar o dia atual?")) {
+    saveHistory();
+    count = 0;
+    counterEl.textContent = count;
+    localStorage.setItem("count", count);
+  }
+};
+
+// 📊 abrir/fechar histórico
+toggleHistory.onclick = () => {
   playClick();
 
   historyMenu.classList.toggle("hidden");
@@ -78,8 +92,9 @@ toggleHistory.addEventListener("click", () => {
   if (!historyMenu.classList.contains("hidden")) {
     loadHistory();
   }
-});
+};
 
-// carregar ao iniciar
-checksToday = parseInt(localStorage.getItem("checksToday")) || 0;
+// iniciar
+checkNewDay();
+counterEl.textContent = count;
 loadHistory();

@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: url('fundo.jpg') no-repeat center center fixed;
   background-size: cover;
   color: white;
@@ -8,40 +8,44 @@ body {
 }
 
 .container {
-  background: rgba(0, 0, 0, 0.6);
   margin: 50px auto;
   padding: 30px;
   width: 350px;
+  background: rgba(0,0,0,0.7);
   border-radius: 15px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 0 25px rgba(0,0,0,0.8);
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
 }
 
 h1 {
   margin-bottom: 20px;
 }
 
-.status-box {
-  font-size: 22px;
+.counter-box {
   margin: 20px 0;
+}
+
+#counter {
+  font-size: 50px;
+  margin: 10px 0;
 }
 
 button {
   padding: 12px;
-  margin: 5px;
+  margin: 6px;
   width: 90%;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
-  background: linear-gradient(45deg, #00c6ff, #0072ff);
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
   color: white;
   transition: 0.2s;
 }
 
 button:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 10px #00c6ff;
+  box-shadow: 0 0 10px #ff4b2b;
 }
 
 .hidden {
@@ -50,14 +54,9 @@ button:hover {
 
 #historyMenu {
   margin-top: 20px;
-  text-align: left;
   max-height: 200px;
   overflow-y: auto;
-}
-
-#historyMenu ul {
-  padding: 0;
-  list-style: none;
+  text-align: left;
 }
 
 #historyMenu li {
