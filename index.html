@@ -36,7 +36,7 @@ body {
     margin: 20px 0;
 }
 
-/* grupos de botão */
+/* grupos */
 .group {
     display: flex;
     justify-content: center;
@@ -61,7 +61,7 @@ button:hover {
     transform: scale(1.1);
 }
 
-/* transparentes */
+/* glass button */
 .btn-glass {
     background: rgba(255,255,255,0.15);
 }
@@ -84,10 +84,31 @@ input {
     50% {transform: scale(1.25);}
     100% {transform: scale(1);}
 }
+
+/* botões de canto */
+.top-buttons {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+/* histórico escondido */
+#historico {
+    display: none;
+    margin-top: 15px;
+}
 </style>
 </head>
 
 <body>
+
+<!-- BOTÕES DO CANTO -->
+<div class="top-buttons">
+    <button class="btn-glass" id="btnSom" onclick="toggleSom()">🔊 ON</button>
+    <button class="btn-glass" onclick="toggleHist()">📊</button>
+</div>
 
 <div class="container">
 
@@ -121,16 +142,12 @@ input {
 </div>
 
 <div class="glass">
-    <div class="group">
-        <button class="btn-glass" onclick="toggleSom()">🔊 Som</button>
-        <button class="btn-glass" onclick="verHistorico()">📊 Histórico</button>
-    </div>
-
     <div id="historico"></div>
 </div>
 
 </div>
 
+<!-- SOM -->
 <audio id="click">
     <source src="https://www.myinstants.com/media/sounds/minecraft_click.mp3">
 </audio>
@@ -139,14 +156,19 @@ input {
 
 let contador = 0;
 let wins = 0;
-let som = true;
+let som = true; // começa ligado
 
 // carregar dados
 function carregar(){
     contador = parseInt(localStorage.getItem("contador")) || 0;
     wins = parseInt(localStorage.getItem("wins")) || 0;
-    som = localStorage.getItem("som") !== "false";
+
+    if(localStorage.getItem("som") !== null){
+        som = localStorage.getItem("som") === "true";
+    }
+
     atualizar();
+    atualizarSomUI();
 }
 
 // salvar
@@ -156,25 +178,35 @@ function salvar(){
     localStorage.setItem("som", som);
 }
 
-// atualizar UI
+// atualizar tela
 function atualizar(){
     document.getElementById("contador").innerText = contador;
     document.getElementById("wins").innerText = wins;
 }
 
-// som
+// atualizar botão som
+function atualizarSomUI(){
+    let btn = document.getElementById("btnSom");
+    btn.innerText = som ? "🔊 ON" : "🔇 OFF";
+}
+
+// tocar som
 function play(){
     if(som){
-        document.getElementById("click").play();
+        let audio = document.getElementById("click");
+        audio.currentTime = 0;
+        audio.play();
     }
 }
 
+// ligar/desligar som
 function toggleSom(){
     som = !som;
     salvar();
+    atualizarSomUI();
 }
 
-// add
+// adicionar
 function add(v){
     contador += v;
     if(contador < 0) contador = 0;
@@ -217,12 +249,24 @@ function resetar(){
     atualizar();
 }
 
-// histórico
+// abrir/fechar histórico
+function toggleHist(){
+    let div = document.getElementById("historico");
+
+    if(div.style.display === "none" || div.style.display === ""){
+        verHistorico();
+        div.style.display = "block";
+    } else {
+        div.style.display = "none";
+    }
+}
+
+// mostrar histórico
 function verHistorico(){
     let hist = JSON.parse(localStorage.getItem("hist")) || [];
     let div = document.getElementById("historico");
 
-    div.innerHTML = "<h3>Histórico</h3>";
+    div.innerHTML = "<h3>📊 Histórico</h3>";
 
     hist.slice().reverse().forEach(h=>{
         div.innerHTML += `<p>${h.data} - ${h.valor}</p>`;
@@ -237,7 +281,7 @@ function animar(){
     setTimeout(()=>el.classList.remove("pop"),200);
 }
 
-// reset automático meia noite
+// reset automático meia-noite
 setInterval(()=>{
     let agora = new Date();
     if(agora.getHours()==0 && agora.getMinutes()==0){
