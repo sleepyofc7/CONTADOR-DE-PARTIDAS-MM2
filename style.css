@@ -32,7 +32,12 @@ button {
 }
 
 button:hover {
-  transform: scale(1.1);
+  transform: scale(1.12);
+  box-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+button:active {
+  transform: scale(0.95);
 }
 
 /* container */
@@ -51,22 +56,27 @@ button:hover {
 #counter {
   font-size: 80px;
   margin: 20px 0;
+  transition: transform 0.2s;
 }
 
-/* botoes principais */
+.bump {
+  transform: scale(1.2);
+}
+
+/* botoes */
 .buttons {
   display: flex;
   justify-content: center;
   gap: 15px;
 }
 
-/* histórico */
-#historyMenu {
+/* menus */
+#historyMenu, #rankMenu {
   position: fixed;
   left: 20px;
   top: 80px;
 
-  width: 250px;
+  width: 260px;
 
   background: rgba(0,0,0,0.4);
   backdrop-filter: blur(10px);
@@ -78,6 +88,11 @@ button:hover {
   overflow-y: auto;
 }
 
+#rankMenu {
+  left: auto;
+  right: 20px;
+}
+
 .hidden {
   display: none;
 }
@@ -85,4 +100,38 @@ button:hover {
 ul {
   list-style: none;
   padding: 0;
+}
+
+/* ranking bonito */
+.rank-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.rank-item.me {
+  color: gold;
+  font-weight: bold;
+}
+
+/* partículas */
+.particle {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: explode 600ms ease-out forwards;
+}
+
+@keyframes explode {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(0.5);
+  }
 }
