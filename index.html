@@ -1,156 +1,78 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Contador MM2</title>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+/* CONFIG DO FIREBASE (COLE A SUA AQUI) */
+ const firebaseConfig = {
+    apiKey: "AIzaSyDe4V1HgiL47Ut81Tn6B2dRxZtHZ-AdkVc",
+    authDomain: "mm2-tracker-c22d8.firebaseapp.com",
+    projectId: "mm2-tracker-c22d8",
+    storageBucket: "mm2-tracker-c22d8.firebasestorage.app",
+    messagingSenderId: "765311899661",
+    appId: "1:765311899661:web:3797d10db4fb7e5e229d44",
+    measurementId: "G-YC940LWFSS"
+  };
 
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-      background: 
-        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-        url("fundo.jpg");
+/* LOGIN SIMPLES */
+let user = localStorage.getItem("user");
 
-      background-size: cover;
-      background-position: center;
-    }
+if (!user) {
+  user = prompt("Digite seu nome:");
+  localStorage.setItem("user", user);
+}
 
-    .container {
-      text-align: center;
-      padding: 40px;
-      border-radius: 25px;
+/* VARIÁVEIS */
+let contador = 0;
+let vitorias = 0;
 
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(12px);
+/* CARREGAR DADOS */
+async function carregar() {
+  const ref = doc(db, "players", user);
+  const snap = await getDoc(ref);
 
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
-    }
+  if (snap.exists()) {
+    const data = snap.data();
+    contador = data.contador || 0;
+    vitorias = data.vitorias || 0;
+  }
 
-    h1 {
-      margin-bottom: 20px;
-      font-size: 28px;
-      letter-spacing: 1px;
-    }
+  atualizar();
+}
 
-    #contador {
-      font-size: 80px;
-      margin: 20px 0;
-      font-weight: bold;
-      transition: transform 0.2s;
-    }
+/* SALVAR ONLINE */
+async function salvar() {
+  const ref = doc(db, "players", user);
 
-    .botoes {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
+  await setDoc(ref, {
+    contador,
+    vitorias,
+    atualizado: new Date()
+  });
+}
 
-    button {
-      font-size: 30px;
-      padding: 15px 25px;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: 0.2s;
-      color: white;
-    }
+/* ATUALIZAR UI */
+function atualizar() {
+  document.getElementById("contador").innerText = contador;
+  document.getElementById("vitorias").innerText = vitorias;
+}
 
-    .mais {
-      background: linear-gradient(45deg, #00ff87, #00c9ff);
-    }
+/* FUNÇÕES */
+window.alterar = function(v){
+  contador += v;
+  if (contador < 0) contador = 0;
+  atualizar();
+  salvar();
+}
 
-    .menos {
-      background: linear-gradient(45deg, #ff416c, #ff4b2b);
-    }
+window.addVitoria = function(){
+  vitorias++;
+  atualizar();
+  salvar();
+}
 
-    .reset {
-      margin-top: 20px;
-      font-size: 18px;
-      padding: 10px 20px;
-      background: #555;
-    }
-
-    button:hover {
-      transform: scale(1.1);
-    }
-
-    button:active {
-      transform: scale(0.95);
-    }
-
-    .animar {
-      transform: scale(1.2);
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="container">
-    <h1>🎮 Partidas Jogadas (MM2)</h1>
-
-    <div id="contador">0</div>
-
-    <div class="botoes">
-      <button class="menos" onclick="diminuir()">-</button>
-      <button class="mais" onclick="aumentar()">+</button>
-    </div>
-
-    <button class="reset" onclick="resetar()">Resetar</button>
-  </div>
-
-  <script>
-    let valor = localStorage.getItem("contadorMM2");
-
-    if (valor === null) {
-      valor = 0;
-    } else {
-      valor = parseInt(valor);
-    }
-
-    const contador = document.getElementById("contador");
-
-    function atualizar() {
-      contador.innerText = valor;
-      localStorage.setItem("contadorMM2", valor);
-
-      contador.classList.add("animar");
-      setTimeout(() => {
-        contador.classList.remove("animar");
-      }, 200);
-    }
-
-    function aumentar() {
-      valor++;
-      atualizar();
-    }
-
-    function diminuir() {
-      if (valor > 0) {
-        valor--;
-        atualizar();
-      }
-    }
-
-    function resetar() {
-      valor = 0;
-      atualizar();
-    }
-
-    atualizar();
-  </script>
-
-</body>
-</html>
+/* INICIAR */
+carregar();
+</script>
