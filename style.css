@@ -1,67 +1,88 @@
 body {
   margin: 0;
-  font-family: Arial;
-  background: url('fundo.jpg') no-repeat center center fixed;
-  background-size: cover;
+  font-family: Arial, sans-serif;
   color: white;
   text-align: center;
+
+  background: url("fundo.jpg") no-repeat center center fixed;
+  background-size: cover;
 }
 
-.container {
-  margin: 50px auto;
-  padding: 30px;
-  width: 350px;
-  background: rgba(0,0,0,0.7);
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+/* topo */
+.top-buttons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
 }
 
-h1 {
-  margin-bottom: 20px;
-}
-
-.counter-box {
-  margin: 20px 0;
-}
-
-#counter {
-  font-size: 50px;
-  margin: 10px 0;
-}
-
+/* glass */
 button {
-  padding: 12px;
-  margin: 6px;
-  width: 90%;
+  padding: 10px 15px;
+  border-radius: 15px;
   border: none;
-  border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
-  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
   color: white;
+
   transition: 0.2s;
 }
 
 button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 10px #ff4b2b;
+  transform: scale(1.1);
+}
+
+/* container */
+.container {
+  margin-top: 120px;
+
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+
+  padding: 40px;
+  border-radius: 25px;
+  display: inline-block;
+}
+
+/* contador */
+#counter {
+  font-size: 80px;
+  margin: 20px 0;
+}
+
+/* botoes principais */
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* histórico */
+#historyMenu {
+  position: fixed;
+  left: 20px;
+  top: 80px;
+
+  width: 250px;
+
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+
+  padding: 20px;
+  border-radius: 15px;
+
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .hidden {
   display: none;
 }
 
-#historyMenu {
-  margin-top: 20px;
-  max-height: 200px;
-  overflow-y: auto;
-  text-align: left;
-}
-
-#historyMenu li {
-  background: rgba(255,255,255,0.1);
-  margin: 5px 0;
-  padding: 8px;
-  border-radius: 8px;
+ul {
+  list-style: none;
+  padding: 0;
 }

@@ -3,31 +3,46 @@ const historyList = document.getElementById("historyList");
 const historyMenu = document.getElementById("historyMenu");
 
 const addBtn = document.getElementById("addBtn");
+const minusBtn = document.getElementById("minusBtn");
 const resetBtn = document.getElementById("resetBtn");
+
 const toggleHistory = document.getElementById("toggleHistory");
+const soundToggle = document.getElementById("soundToggle");
 
 // 🔊 som
 const clickSound = new Audio("click.mp3");
 
+let soundOn = localStorage.getItem("sound") !== "off";
+
+function updateSoundIcon() {
+  soundToggle.textContent = soundOn ? "🔊" : "🔇";
+}
+updateSoundIcon();
+
 function playClick() {
-  clickSound.currentTime = 0;
-  clickSound.play();
+  if (soundOn) {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  }
 }
 
 // 📊 dados
 let count = parseInt(localStorage.getItem("count")) || 0;
-let lastDay = localStorage.getItem("lastDay") || new Date().getDate();
+let lastDate = localStorage.getItem("lastDate");
 
-// 📅 verifica mudança de dia
+// 📅 verifica mudança de dia (BR)
 function checkNewDay() {
-  const today = new Date().getDate();
+  const now = new Date().toLocaleDateString("pt-BR");
 
-  if (today != lastDay) {
-    saveHistory();
+  if (lastDate !== now) {
+    if (lastDate !== null) {
+      saveHistory();
+    }
+
     count = 0;
+    lastDate = now;
 
-    lastDay = today;
-    localStorage.setItem("lastDay", today);
+    localStorage.setItem("lastDate", now);
     localStorage.setItem("count", count);
   }
 }
@@ -36,10 +51,8 @@ function checkNewDay() {
 function saveHistory() {
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
-  const date = new Date().toLocaleDateString();
-
   history.push({
-    date: date,
+    date: lastDate,
     matches: count
   });
 
@@ -52,38 +65,52 @@ function loadHistory() {
 
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
-  history.reverse().forEach(item => {
+  history.slice().reverse().forEach(item => {
     let li = document.createElement("li");
     li.textContent = `${item.date} - ${item.matches} partidas`;
     historyList.appendChild(li);
   });
 }
 
-// ➕ adicionar partida
+// ➕ adicionar
 addBtn.onclick = () => {
   playClick();
-
   checkNewDay();
 
   count++;
-  counterEl.textContent = count;
-
-  localStorage.setItem("count", count);
+  update();
 };
 
-// 🔄 reset manual
+// ➖ diminuir
+minusBtn.onclick = () => {
+  playClick();
+  checkNewDay();
+
+  if (count > 0) {
+    count--;
+    update();
+  }
+};
+
+// 🔄 reset
 resetBtn.onclick = () => {
   playClick();
 
   if (confirm("Resetar o dia atual?")) {
     saveHistory();
     count = 0;
-    counterEl.textContent = count;
-    localStorage.setItem("count", count);
+    update();
   }
 };
 
-// 📊 abrir/fechar histórico
+// 🔊 toggle som
+soundToggle.onclick = () => {
+  soundOn = !soundOn;
+  localStorage.setItem("sound", soundOn ? "on" : "off");
+  updateSoundIcon();
+};
+
+// 📊 abrir histórico
 toggleHistory.onclick = () => {
   playClick();
 
@@ -94,7 +121,13 @@ toggleHistory.onclick = () => {
   }
 };
 
+// atualizar UI
+function update() {
+  counterEl.textContent = count;
+  localStorage.setItem("count", count);
+}
+
 // iniciar
 checkNewDay();
-counterEl.textContent = count;
+update();
 loadHistory();

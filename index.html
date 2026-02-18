@@ -1,31 +1,35 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>MM2 Tracker</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>MM2 Tracker</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
+<div class="top-buttons">
+  <button id="soundToggle">🔊</button>
+  <button id="toggleHistory">📊</button>
+</div>
 
 <div class="container">
 
-  <h1>🔪 MM2 Tracker</h1>
+  <h1>MM2 Tracker</h1>
 
-  <div class="counter-box">
-    <p>Partidas Hoje</p>
-    <h2 id="counter">0</h2>
+  <div id="counter">0</div>
+
+  <div class="buttons">
+    <button id="addBtn">+1</button>
+    <button id="minusBtn">-1</button>
+    <button id="resetBtn">Reset</button>
   </div>
 
-  <button id="addBtn">➕ +1 Partida</button>
-  <button id="resetBtn">🔄 Resetar Dia</button>
+</div>
 
-  <button id="toggleHistory">📊 Histórico</button>
-
-  <div id="historyMenu" class="hidden">
-    <h2>📅 Histórico</h2>
-    <ul id="historyList"></ul>
-  </div>
-
+<div id="historyMenu" class="hidden">
+  <h2>Histórico Diário</h2>
+  <ul id="historyList"></ul>
 </div>
 
 <script src="script.js"></script>
