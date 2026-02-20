@@ -1,7 +1,7 @@
-<!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
+<title>MM2 Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🏆MM2CP By Sleepy🏆</title>
 <link rel="stylesheet" href="style.css">
@@ -20,24 +20,21 @@
 <div class="top-left" id="playerInfo"></div>
 
 <div class="top-buttons">
-  <button id="soundToggle">🔊</button>
-  <button id="toggleHistory">📊</button>
-  <button id="toggleRank">🏆</button>
+<button id="soundToggle">🔊</button>
+<button id="toggleHistory">📊</button>
+<button id="toggleRank">🏆</button>
   <button id="toggleMissions">🎯</button>
   <button id="toggleMeta">🔥</button>
 </div>
 
+<div class="container">
 <div class="container" id="app" style="display:none">
 
-  <h1>MM2 Tracker</h1>
+<h1>MM2 Tracker</h1>
 
-  <div id="counter">0</div>
-
-  <div class="buttons">
-    <button id="addBtn">+1</button>
-    <button id="minusBtn">-1</button>
-    <button id="resetBtn">Reset</button>
-  </div>
+@@ -26,20 +39,33 @@ <h1>MM2 Tracker</h1>
+<button id="resetBtn">Reset</button>
+</div>
 
   <div class="xp-bar">
     <div id="xpFill"></div>
@@ -45,15 +42,20 @@
 
 </div>
 
+<!-- histórico -->
+<div id="historyMenu" class="hidden">
 <!-- menus -->
 <div id="historyMenu" class="menu hidden">
-  <h2>Histórico</h2>
-  <ul id="historyList"></ul>
+<h2>Histórico</h2>
+<ul id="historyList"></ul>
 </div>
 
+<!-- ranking -->
+<div id="rankMenu" class="hidden">
+  <h2>🏆 Ranking</h2>
 <div id="rankMenu" class="menu hidden">
   <h2>Ranking</h2>
-  <ul id="rankList"></ul>
+<ul id="rankList"></ul>
 </div>
 
 <div id="missionsMenu" class="menu hidden">
