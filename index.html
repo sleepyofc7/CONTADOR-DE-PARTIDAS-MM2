@@ -1,73 +1,159 @@
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>MM2 Tracker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏆MM2CP By Sleepy🏆</title>
-<link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏆PJM2🏆</title>
 
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #3a3a5a);
+      color: white;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(0,0,0,0.4);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    h1 { margin-bottom: 20px; }
+
+    .counter {
+      font-size: 60px;
+      letter-spacing: 10px;
+      background: black;
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      display: inline-block;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: none;
+      font-size: 40px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    button:active { transform: scale(0.9); }
+
+    .minus { background: #ff4d4d; color: white; }
+    .plus { background: #4caf50; color: white; }
+
+    .actions { margin-top: 15px; }
+
+    .actions button {
+      width: auto;
+      height: auto;
+      border-radius: 8px;
+      font-size: 14px;
+      padding: 8px 12px;
+      margin: 5px;
+      background: #555;
+      color: white;
+    }
+
+    .actions button:hover { background: #777; }
+  </style>
+</head>
 <body>
 
-<!-- login -->
-<div id="loginBox">
-  <h2>Digite seu nome</h2>
-  <input id="nameInput" placeholder="Seu nome">
-  <button onclick="saveName()">Entrar</button>
-</div>
-
-<!-- topo -->
-<div class="top-left" id="playerInfo"></div>
-
-<div class="top-buttons">
-<button id="soundToggle">🔊</button>
-<button id="toggleHistory">📊</button>
-<button id="toggleRank">🏆</button>
-  <button id="toggleMissions">🎯</button>
-  <button id="toggleMeta">🔥</button>
-</div>
-
 <div class="container">
-<div class="container" id="app" style="display:none">
+  <h1 id="title">🏆 PJM2 🏆</h1>
 
-<h1>MM2 Tracker</h1>
+  <div class="counter" id="counter">0000</div>
 
-@@ -26,20 +39,33 @@ <h1>MM2 Tracker</h1>
-<button id="resetBtn">Reset</button>
-</div>
-
-  <div class="xp-bar">
-    <div id="xpFill"></div>
+  <div class="buttons">
+    <button class="minus" onclick="decrease()">-</button>
+    <button class="plus" onclick="increase()">+</button>
   </div>
 
+  <div class="actions">
+    <button onclick="changeTitle()">Modificar título</button>
+    <button onclick="setNumber()">Modificar número</button>
+    <button onclick="resetCounter()">Redefinir</button>
+  </div>
+
+  <p style="margin-top:20px; font-size:12px; opacity:0.7;">
+    • Pode ser usado para contar pessoas, marcar ou contar cliques do mouse.<br>
+    • Exibe 4 dígitos. Ao ultrapassar 9999, aumenta automaticamente.<br>
+    • Clique em + ou - para alterar.<br>
+    • Número salvo automaticamente no navegador.<br>
+  </p>
 </div>
 
-<!-- histórico -->
-<div id="historyMenu" class="hidden">
-<!-- menus -->
-<div id="historyMenu" class="menu hidden">
-<h2>Histórico</h2>
-<ul id="historyList"></ul>
-</div>
+<!-- 🔊 SEU SOM PERSONALIZADO -->
+<audio id="clickSound" src="click.mp3" preload="auto"></audio>
 
-<!-- ranking -->
-<div id="rankMenu" class="hidden">
-  <h2>🏆 Ranking</h2>
-<div id="rankMenu" class="menu hidden">
-  <h2>Ranking</h2>
-<ul id="rankList"></ul>
-</div>
+<script>
+  let count = localStorage.getItem("count") ? parseInt(localStorage.getItem("count")) : 0;
 
-<div id="missionsMenu" class="menu hidden">
-  <h2>Missões</h2>
-  <ul id="missionsList"></ul>
-</div>
+  function updateDisplay() {
+    let display = count.toString().padStart(4, '0');
+    document.getElementById("counter").innerText = display;
+    localStorage.setItem("count", count);
+  }
 
-<div id="metaMenu" class="menu hidden">
-  <h2>Meta do Dia</h2>
-  <p id="metaText"></p>
-</div>
+  function playClick() {
+    const audio = document.getElementById("clickSound");
+    audio.currentTime = 0; // permite clicar rápido várias vezes
+    audio.play();
+  }
 
-<script src="script.js"></script>
+  function increase() {
+    count++;
+    playClick();
+    updateDisplay();
+  }
+
+  function decrease() {
+    count--;
+    playClick();
+    updateDisplay();
+  }
+
+  function resetCounter() {
+    count = 0;
+    playClick();
+    updateDisplay();
+  }
+
+  function changeTitle() {
+    let newTitle = prompt("Digite o novo título:");
+    if (newTitle) {
+      document.getElementById("title").innerText = newTitle;
+    }
+  }
+
+  function setNumber() {
+    let num = prompt("Digite o número:");
+    if (!isNaN(num)) {
+      count = parseInt(num);
+      updateDisplay();
+    }
+  }
+
+  updateDisplay();
+</script>
+
 </body>
 </html>
